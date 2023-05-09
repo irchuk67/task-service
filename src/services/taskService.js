@@ -1,8 +1,16 @@
 const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 
-function fetchTasks(){
-    return Task.find({})
+function fetchTasks(role, userId){
+    console.log(role)
+    let filter;
+    if (role === "creator"){
+        filter = {createdBy: userId}
+    }
+    else if(role === "assignee"){
+        filter = {assignee: userId}
+    }
+    return Task.find(filter)
 }
 
 function fetchTaskById(id){
@@ -10,7 +18,6 @@ function fetchTaskById(id){
 }
 
 function deleteTask(id){
-    console.log(id)
     return Task.findById(id).then(response => {
         console.log(response)
         if (!response) return null;
@@ -21,15 +28,16 @@ function deleteTask(id){
     })
 }
 
-function createTask(newTask){
+function createTask(newTask, userId){
     const taskToCreate = new Task({
-        text: newTask.text,
+        title: newTask.title,
+        description: newTask.description,
         startDate: newTask.startDate,
         endDate: newTask.endDate,
         needToRepeat: newTask.needToRepeat,
         periodOfRepeat: newTask.periodOfRepeat,
-        assignedBy: newTask.assignedBy,
-        performedBy: newTask.performedBy,
+        createdBy: userId,
+        assignee: newTask.assignee,
         isReady: newTask.isReady,
         neededInstruments: newTask.neededInstruments
     })
@@ -43,13 +51,13 @@ function updateTask(id, updatedTask) {
             if (! task) {
                 return null
             }
-             task.text = updatedTask.text;
+             task.title = updatedTask.title;
+             task.description = updatedTask.description;
              task.startDate = updatedTask.startDate;
              task.endDate = updatedTask.endDate ;
              task.needToRepeat = updatedTask.needToRepeat ;
              task.periodOfRepeat = updatedTask.periodOfRepeat ;
-             task.assignedBy = updatedTask.assignedBy ;
-             task.performedBy = updatedTask.performedBy ;
+             task.assignee = updatedTask.assignee ;
              task.isReady = updatedTask.isReady ;
              task.neededInstruments = updatedTask.neededInstruments
             return  task.save()

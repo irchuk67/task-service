@@ -2,24 +2,30 @@ const express = require('express');
 const mongoose = require('mongoose');
 const {deleteTask, updateTask, fetchTasks, fetchTaskById, createTask} = require("../../services/TaskService");
 const {NO_CONTENT, OK, NOT_FOUND, CREATED} = require("../../constants/HTTPCodes");
+const verifyToken = require('../../middleware/tokenValidator')
+const {validateTask, taskValidator} = require("../../validator/task");
 const router = express.Router();
 
 
-router.get('/', async (request, response) => {
-    const tasks = await fetchTasks();
+router.get('/:role/:userId', verifyToken, async (request, response) => {
+    if(!request.user) {
+        return;
+    }
+    const tasks = await fetchTasks(request.params.role, request.params.userId);
     if(!tasks){
         response.status(NOT_FOUND).send('no tasks found')
     }else{
         const formattedTasks = tasks.map(task =>{
             return {
                 id: task._id,
-                text: task.text,
+                title: task.title,
+                description: task.description,
                 startDate: task.startDate,
                 endDate: task.endDate,
                 needToRepeat: task.needToRepeat,
                 periodOfRepeat: task.periodOfRepeat,
-                assignedBy: task.assignedBy,
-                performedBy: task.performedBy,
+                createdBy: task.createdBy,
+                assignee: task.assignee,
                 isReady: task.isReady,
                 neededInstruments: task.neededInstruments
             }
@@ -28,20 +34,25 @@ router.get('/', async (request, response) => {
     }
 });
 
-router.get(`/:taskId/`, async (request, response) => {
+router.get(`/:taskId/`, verifyToken, async (request, response) => {
+    if(!request.user) {
+        return;
+    }
+
     const task = await fetchTaskById(request.params.taskId);
     if (!task) {
         response.status(NOT_FOUND).send('no task found')
     }else{
         const taskOut = {
             id: task._id,
-            text: task.text,
+            title: task.title,
+            description: task.description,
             startDate: task.startDate,
             endDate: task.endDate,
             needToRepeat: task.needToRepeat,
             periodOfRepeat: task.periodOfRepeat,
-            assignedBy: task.assignedBy,
-            performedBy: task.performedBy,
+            createdBy: task.createdBy,
+            assignee: task.assignee,
             isReady: task.isReady,
             neededInstruments: task.neededInstruments
         }
@@ -49,9 +60,12 @@ router.get(`/:taskId/`, async (request, response) => {
     }
 })
 
-router.delete(`/:taskId`, async (request, response) => {
+router.delete(`/:taskId`, verifyToken, async (request, response) => {
+    if(!request.user) {
+        return;
+    }
+
     const isDeleted = await deleteTask(request.params.taskId);
-    console.log(isDeleted)
     if (!isDeleted){
         response.status(NOT_FOUND).send('no task found')
     }else{
@@ -61,33 +75,35 @@ router.delete(`/:taskId`, async (request, response) => {
 
 router.use(express.json());
 
-router.put('/:taskId', async (request, response) => {
+router.put('/:taskId', verifyToken, taskValidator('updateTask'), async (request, response) => {
+    if(!request.user) {
+        return;
+    }
+    if(!validateTask(request, response)){
+        return;
+    }
+
     let updatedTask = await updateTask(request.params.taskId, request.body)
     if (updatedTask === null){
-        response.status(NOT_FOUND).send('no Task found')
+        response.status(NOT_FOUND).send('no task found')
     }else{
         response.status(OK).json(updatedTask)
     }
 })
 
-router.post('/', async (request, response) => {
-    const newTask = await createTask(request.body);
+router.post('/', verifyToken, taskValidator('createTask'), async (request, response) => {
+    if(!request.user) {
+        return;
+    }
+    if(!validateTask(request, response)){
+        return;
+    }
+
+    const newTask = await createTask(request.body, request.user.userId);
     if (!newTask) {
         response.status(NOT_FOUND).send('no Task created')
     }else{
-        const TaskOut = {
-            id: newTask._id,
-            text: newTask.text,
-            startDate: newTask.startDate,
-            endDate: newTask.endDate,
-            needToRepeat: newTask.needToRepeat,
-            periodOfRepeat: newTask.periodOfRepeat,
-            assignedBy: newTask.assignedBy,
-            performedBy: newTask.performedBy,
-            isReady: newTask.isReady,
-            neededInstruments: newTask.neededInstruments
-        }
-        response.status(CREATED).json(TaskOut)
+           response.status(CREATED).json({id: newTask._id})
     }
 });
 
