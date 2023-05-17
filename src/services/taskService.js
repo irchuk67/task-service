@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const Task = mongoose.model('Task');
 
-function fetchTasks(role, userId){
+function fetchTasks(role, userId, assigneeId){
     console.log(role)
     let filter;
     if (role === "creator"){
-        filter = {createdBy: userId}
+        filter = {createdBy: userId, assignee: assigneeId}
     }
     else if(role === "assignee"){
         filter = {assignee: userId}

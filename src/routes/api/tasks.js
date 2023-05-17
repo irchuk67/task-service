@@ -11,7 +11,7 @@ router.get('/:role/:userId', verifyToken, async (request, response) => {
     if(!request.user) {
         return;
     }
-    const tasks = await fetchTasks(request.params.role, request.params.userId);
+    const tasks = await fetchTasks(request.params.role, request.params.userId, request.query.assigneeId);
     if(!tasks){
         response.status(NOT_FOUND).send('no tasks found')
     }else{

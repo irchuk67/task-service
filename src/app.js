@@ -13,6 +13,11 @@ app.use(cors({
 require('./models/Task');
 app.use(require('./routes'))
 
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+})
+
 app.listen(PORT, (error) => {
     if(!error) {
         console.log(`Server side is running on port ${PORT}`)

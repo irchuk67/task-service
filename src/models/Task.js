@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
+        required: false
     },
     startDate: {
         type: Date,
@@ -15,14 +15,15 @@ const taskSchema = new mongoose.Schema({
     },
     endDate: {
         type: Date,
-        required: true
+        required: false
     },
     needToRepeat: {
         type: Boolean,
-        required: true
+        required: false,
+        default: false
     },
     periodOfRepeat: {
-        type: Number,
+        type: String,
         required: false
     },
     createdBy: {
