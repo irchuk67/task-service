@@ -1,16 +1,51 @@
 const mongoose = require('mongoose');
+const {NOT_FOUND, OK} = require("../constants/HTTPCodes");
 const Task = mongoose.model('Task');
 
-function fetchTasks(role, userId, assigneeId){
+async function fetchTasks(role, userId, assigneeId){
+    console.log(role)
+    let filter;
+    if (role === "creator" && assigneeId){
+        filter = {createdBy: userId, assignee: assigneeId}
+    }
+    else if(role === "creator"){
+        filter = {createdBy: userId}
+    }
+    else if(role === "assignee"){
+        filter = {assignee: userId}
+    }
+
+    const tasks = await Task.find(filter);
+    if (!tasks) {
+        return ;
+    } else {
+        return tasks.map(task => {
+            return {
+                id: task._id,
+                title: task.title,
+                description: task.description,
+                startDate: task.startDate,
+                endDate: task.endDate,
+                needToRepeat: task.needToRepeat,
+                periodOfRepeat: task.periodOfRepeat,
+                createdBy: task.createdBy,
+                assignee: task.assignee,
+                isReady: task.isReady,
+                neededInstruments: task.neededInstruments
+            }
+        })
+    }
+}
+
+function fetchAllTasksWithCreatorAndAssignee(role, userId, assigneeId){
     console.log(role)
     let filter;
     if (role === "creator"){
         filter = {createdBy: userId, assignee: assigneeId}
     }
-    else if(role === "assignee"){
-        filter = {assignee: userId}
-    }
-    return Task.find(filter)
+    const tasks = Task.find(filter)
+
+
 }
 
 function fetchTaskById(id){
@@ -69,5 +104,6 @@ module.exports = {
     fetchTasks,
     fetchTaskById,
     deleteTask,
-    createTask
+    createTask,
+    fetchAllTasksWithCreatorAndAssignee
 }

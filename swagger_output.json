@@ -1,0 +1,234 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "REST API",
+    "description": ""
+  },
+  "host": "localhost:3000",
+  "basePath": "/",
+  "schemes": [
+    "Task"
+  ],
+  "definitions": {
+    "Task": {
+      "required": [
+        "title",
+        "description",
+        "startDate",
+        "endDate",
+        "createdBy",
+        "assignee"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The auto-generated id of the task",
+          "uniqueItems": true
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of your task"
+        },
+        "description": {
+          "type": "string",
+          "description": "The description of your task"
+        },
+        "startDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The date when to start performing your task"
+        },
+        "endDate": {
+          "type": "string",
+          "format": "date",
+          "description": "The date when to end performing your task"
+        },
+        "needToRepeat": {
+          "type": "boolean",
+          "description": "whether you need to repear this task with fixed period"
+        },
+        "periodOfRepeat": {
+          "type": "string",
+          "description": "period of repeat task "
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "The person who created this task"
+        },
+        "assignee": {
+          "type": "string",
+          "description": "The person who will perform this task"
+        },
+        "isReady": {
+          "type": "boolean",
+          "description": "Whether task is done"
+        },
+        "neededInstruments": {
+          "type": "array",
+          "description": "Array of needed instruments for task perform",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Tasks": {
+      "type": "array",
+      "$ref": "#/definitions/Task"
+    }
+
+  },
+  "paths": {
+    "/{role}/{userId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "assigneeId",
+            "in": "query",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden"
+          },
+          "200": {
+            "description": "Found tasks",
+            "schema": {
+              "$ref": "#/definitions/Tasks"
+            }
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    },
+    "/{taskId}/": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden"
+          },
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        }
+      }
+    },
+    "/{taskId}": {
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden"
+          },
+          "204": {
+            "description": "Deleted"
+          }
+        }
+      },
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden"
+          },
+          "200": {
+            "description": "Ok",
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Forbidden"
+          },
+          "201":{
+            "description": "Created",
+            "schema": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
