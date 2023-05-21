@@ -19,6 +19,7 @@
     "jsonwebtoken": "^9.0.0",
     "mockingoose": "^2.16.2",
     "mongoose": "^6.6.1",
+    "node-cron": "^3.0.2",
     "nodemon": "^2.0.20",
     "prompt-sync": "^4.2.0",
     "supertest": "^6.3.1",

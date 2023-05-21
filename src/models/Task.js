@@ -42,6 +42,10 @@ const taskSchema = new mongoose.Schema({
     neededInstruments: {
         type: [String],
         required: false
+    },
+    updateDateTime: {
+        type: Date,
+        required: false
     }
 })
 

@@ -4,7 +4,7 @@ const {deleteTask, updateTask, fetchTasks, fetchTaskById, createTask} = require(
 const {NO_CONTENT, OK, NOT_FOUND, CREATED} = require("../../constants/HTTPCodes");
 const verifyToken = require('../../middleware/tokenValidator')
 const {validateTask, taskValidator} = require("../../validator/task");
-const {fetchAllTasksForCreator} = require("../../services/taskService");
+const {changeStatus, getDailyTasks} = require("../../services/taskService");
 const router = express.Router();
 
 router.get('/:role/:userId', verifyToken, async (request, response) => {
@@ -19,17 +19,27 @@ router.get('/:role/:userId', verifyToken, async (request, response) => {
     }
 });
 
-/*router.get('/:role/:userId', verifyToken, async (request, response) => {
-    if (!request.user) {
+router.patch('/:taskId', verifyToken, async (request, response) => {
+    if(!request.user){
         return;
     }
-    const tasks = await fetchAllTasksForCreator(request.params.role, request.params.userId, request.query.assigneeId);
-    if(!tasks){
-        response.status(NOT_FOUND).send('no tasks found');
+    const updated = await changeStatus(request.params.taskId).catch(err => {
+        console.log(err)
+        response.status(500)
+    });
+    response.status(200).send(updated)
+})
+
+router.get('/daily', verifyToken, async (request, response) => {
+    if(!request.user){
         return;
+    }
+    const tasks = await getDailyTasks(request.user.userId);
+    if(tasks.length <= 0){
+        response.status(NOT_FOUND)
     }
     response.status(OK).json(tasks)
-});*/
+})
 
 router.get(`/:taskId/`, verifyToken, async (request, response) => {
     if (!request.user) {

@@ -79,7 +79,6 @@ function createTask(newTask, userId){
     return taskToCreate.save()
 }
 
-
 function updateTask(id, updatedTask) {
     return Task.findById(id)
         .then(task => {
@@ -99,11 +98,35 @@ function updateTask(id, updatedTask) {
         })
 }
 
+async function changeStatus(taskId){
+    const TaskToMark = await Task.findById(taskId);
+    console.log(TaskToMark)
+    TaskToMark.isReady = !TaskToMark.isReady;
+    TaskToMark.updateDateTime = new Date();
+    console.log(TaskToMark)
+    return TaskToMark.save();
+}
+
+async function getDailyTasks(assigneeId){
+    const currentDate = new Date();
+    const tasks = await Task.find({
+        assignee: assigneeId,
+        startDate: {
+            $lte: currentDate
+        },
+        endDate: {
+            $gte: currentDate
+        }
+    });
+    return tasks
+
+}
 module.exports = {
     updateTask,
     fetchTasks,
     fetchTaskById,
     deleteTask,
     createTask,
-    fetchAllTasksWithCreatorAndAssignee
+    changeStatus,
+    getDailyTasks
 }

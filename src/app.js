@@ -22,6 +22,8 @@ app.use((err, req, res, next) => {
     res.status(500).send('Something broke!')
 })
 
+require('./services/taskUpdateScheduleJob')
+
 app.listen(PORT, (error) => {
     if(!error) {
         console.log(`Server side is running on port ${PORT}`)
