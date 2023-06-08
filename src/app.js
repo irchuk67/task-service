@@ -3,9 +3,11 @@ const cors = require("cors");
 const mongoose = require('mongoose');
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require('../swagger_output.json');
+const dotenv = require('dotenv');
 
+dotenv.config();
 const app = express();
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://tasks:tasks@localhost:27018/tasks');
+mongoose.connect(process.env.MONGODB_URI_TASKS || 'mongodb://tasks:tasks@localhost:27018/tasks');
 const PORT = process.env.PORT || 8000;
 
 
