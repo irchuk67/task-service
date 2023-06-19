@@ -3,7 +3,6 @@ const {NOT_FOUND, OK} = require("../constants/HTTPCodes");
 const Task = mongoose.model('Task');
 
 async function fetchTasks(role, userId, assigneeId){
-    console.log(role)
     let filter;
     if (role === "creator" && assigneeId){
         filter = {createdBy: userId, assignee: assigneeId}
@@ -35,17 +34,6 @@ async function fetchTasks(role, userId, assigneeId){
             }
         })
     }
-}
-
-function fetchAllTasksWithCreatorAndAssignee(role, userId, assigneeId){
-    console.log(role)
-    let filter;
-    if (role === "creator"){
-        filter = {createdBy: userId, assignee: assigneeId}
-    }
-    const tasks = Task.find(filter)
-
-
 }
 
 function fetchTaskById(id){
@@ -121,6 +109,7 @@ async function getDailyTasks(assigneeId){
     return tasks
 
 }
+
 module.exports = {
     updateTask,
     fetchTasks,

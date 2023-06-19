@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon src/app.js",
     "docs": "./node_modules/jsdoc/jsdoc.js -c .jsdoc.conf.json",
-    "test": "jest",
+    "test": "jest --coverage=true",
     "swagger-autogen": "node swagger.js"
   },
   "dependencies": {

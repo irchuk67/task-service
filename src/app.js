@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 const app = express();
-mongoose.connect(process.env.MONGODB_URI_TASKS || 'mongodb://tasks:tasks@localhost:27018/tasks');
+mongoose.connect('mongodb+srv://receipts:receipts@cluster0.kkfjbu2.mongodb.net/tasks?retryWrites=true&w=majority'/*process.env.MONGODB_URI_TASKS || 'mongodb://tasks:tasks@localhost:27018/tasks'*/);
 const PORT = process.env.PORT || 8000;
 
 
