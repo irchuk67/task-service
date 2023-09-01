@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const {deleteTask, updateTask, fetchTasks, fetchTaskById, createTask} = require("../../services/TaskService");
+const {deleteTask, updateTask, fetchTasks, fetchTaskById, createTask} = require("../../services/taskService");
 const {NO_CONTENT, OK, NOT_FOUND, CREATED} = require("../../constants/HTTPCodes");
 const verifyToken = require('../../middleware/tokenValidator')
 const {validateTask, taskValidator} = require("../../validator/task");
